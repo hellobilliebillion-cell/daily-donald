@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE DAILY DONALD — Live Trump News Aggregator</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍊</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --card-bg: #111;
+            --card-hover: #1a1a1a;
+            --text: #f0f0f0;
+            --text-muted: #888;
+            --accent: #ff4d00;
+            --accent-glow: rgba(255, 77, 0, 0.3);
+            --green: #00d67d;
+            --red: #ff4757;
+            --blue: #4a9eff;
+            --border: #222;
+            --rage-1: #4CAF50;
+            --rage-2: #8BC34A;
+            --rage-3: #FFEB3B;
+            --rage-4: #FF9800;
+            --rage-5: #f44336;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        
+        /* HEADER */
+        header {
+            background: linear-gradient(180deg, #111 0%, var(--bg) 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: #ffffff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .logo h1 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .logo h1 span { color: var(--accent); }
+        .logo-tagline {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-family: 'Space Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .header-stats {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 214, 125, 0.15);
+            border: 1px solid var(--green);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--green);
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 1.5s ease infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* VIRAL TICKER */
+        .viral-ticker {
+            background: linear-gradient(90deg, #1a1a1a, #0f0f0f);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            height: 44px;
+        }
+        .ticker-label {
+            background: var(--red);
+            color: white;
+            padding: 12px 16px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            z-index: 2;
+        }
+        .ticker-track {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        .ticker-content {
+            display: flex;
+            gap: 50px;
+            animation: tickerScroll 60s linear infinite;
+            white-space: nowrap;
+            padding-left: 20px;
+        }
+        .ticker-content:hover {
+            animation-play-state: paused;
+        }
+        @keyframes tickerScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text);
+            font-size: 0.8rem;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .ticker-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .ticker-user {
+            color: var(--blue);
+            font-weight: 700;
+        }
+        .ticker-text {
+            color: var(--text-muted);
+        }
+        .ticker-likes {
+            color: var(--red);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+        }
+        .ticker-divider {
+            color: var(--border);
+            font-size: 1.2rem;
+        }
+
+        /* CHAOS METER */
+        .chaos-meter-section {
+            background: linear-gradient(90deg, #0f0f0f, #1a1a1a);
+            border-bottom: 1px solid var(--border);
+            padding: 20px;
+        }
+        .chaos-meter-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .chaos-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .chaos-meter {
+            width: 400px;
+            max-width: 90vw;
+            height: 24px;
+            background: #222;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid #333;
+        }
+        .chaos-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--rage-1), var(--rage-2), var(--rage-3), var(--rage-4), var(--rage-5));
+            border-radius: 10px;
+            transition: width 1s ease;
+            position: relative;
+        }
+        .chaos-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .chaos-labels {
+            display: flex;
+            justify-content: space-between;
+            width: 400px;
+            max-width: 90vw;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-family: 'Space Mono', monospace;
+        }
+        .chaos-level {
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 8px 20px;
+            border-radius: 8px;
+            animation: glow 2s ease infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px currentColor; }
+            50% { box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+        }
+        .chaos-level.level-1 { background: var(--rage-1); color: #000; }
+        .chaos-level.level-2 { background: var(--rage-2); color: #000; }
+        .chaos-level.level-3 { background: var(--rage-3); color: #000; }
+        .chaos-level.level-4 { background: var(--rage-4); color: #000; }
+        .chaos-level.level-5 { background: var(--rage-5); color: #fff; }
+
+        /* FEED STATUS */
+        .feed-status {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+        .feed-tag {
+            background: var(--card-bg);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        .feed-tag.ok { border-color: var(--green); color: var(--green); }
+        .feed-tag.error { border-color: var(--red); color: var(--red); }
+
+        /* MAIN LAYOUT */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 30px;
+        }
+        @media (max-width: 1000px) {
+            .main-container { grid-template-columns: 1fr; }
+        }
+
+        /* NEWS SECTION */
+        .news-section h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .news-section h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        /* NEWS CARD */
+        .news-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .news-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px var(--accent);
+        }
+        .news-card.breaking {
+            border-color: var(--red);
+            animation: breakingPulse 2s ease infinite;
+        }
+        @keyframes breakingPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(255, 71, 87, 0.2); }
+        }
+        .card-header {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #1a1a1a, #222);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-rage-display {
+            font-size: 2rem;
+        }
+        .card-badge {
+            background: var(--red);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .card-time {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        .rage-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .rage-badge.level-1 { background: var(--rage-1); color: #000; }
+        .rage-badge.level-2 { background: var(--rage-2); color: #000; }
+        .rage-badge.level-3 { background: var(--rage-3); color: #000; }
+        .rage-badge.level-4 { background: var(--rage-4); color: #000; }
+        .rage-badge.level-5 { background: var(--rage-5); color: #fff; }
+        .card-content {
+            padding: 16px;
+            flex: 1;
+        }
+        .card-source {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .card-title {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            line-height: 1.35;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card-excerpt {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: auto;
+        }
+        .rage-meter-mini {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+        }
+        .rage-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #333;
+            transition: all 0.3s;
+        }
+        .rage-dot.active.l1 { background: var(--rage-1); box-shadow: 0 0 6px var(--rage-1); }
+        .rage-dot.active.l2 { background: var(--rage-2); box-shadow: 0 0 6px var(--rage-2); }
+        .rage-dot.active.l3 { background: var(--rage-3); box-shadow: 0 0 6px var(--rage-3); }
+        .rage-dot.active.l4 { background: var(--rage-4); box-shadow: 0 0 6px var(--rage-4); }
+        .rage-dot.active.l5 { background: var(--rage-5); box-shadow: 0 0 6px var(--rage-5); }
+        .card-category {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .sidebar-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-header h3 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sidebar-content {
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* POLYMARKET */
+        .poly-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .poly-item:last-child { border-bottom: none; }
+        .poly-question {
+            font-size: 0.8rem;
+            flex: 1;
+            padding-right: 12px;
+        }
+        .poly-odds {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .poly-percent {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--green);
+            min-width: 50px;
+            text-align: right;
+        }
+        .poly-change {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .poly-change.up { background: rgba(0, 214, 125, 0.2); color: var(--green); }
+        .poly-change.down { background: rgba(255, 71, 87, 0.2); color: var(--red); }
+
+        /* TRUTH SOCIAL */
+        .truth-post {
+            padding: 14px;
+            background: var(--bg);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-left: 3px solid var(--blue);
+            position: relative;
+        }
+        .truth-post:last-child { margin-bottom: 0; }
+        .truth-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .truth-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #ff8c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .truth-name {
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .truth-handle {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        .truth-text {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        .truth-text strong { color: var(--red); }
+        .truth-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-family: 'Space Mono', monospace;
+        }
+        .truth-rage {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* VIRAL TWEETS */
+        .tweet-item {
+            display: block;
+            padding: 12px;
+            background: var(--bg);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .tweet-item:hover {
+            background: var(--card-hover);
+            border-color: var(--blue);
+        }
+        .tweet-item:last-child { margin-bottom: 0; }
+        .tweet-user {
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--blue);
+        }
+        .tweet-likes {
+            color: var(--red);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            margin-top: 6px;
+        }
+
+        /* STOCK TIPS */
+        .stock-item {
+            display: block;
+            padding: 12px;
+            background: var(--bg);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--accent);
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        .stock-item:hover {
+            background: var(--card-hover);
+            transform: translateX(4px);
+        }
+        .stock-item:last-child { margin-bottom: 0; }
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .stock-ticker {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--accent);
+        }
+        .stock-reason {
+            font-size: 0.8rem;
+            color: var(--text);
+            line-height: 1.4;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .stock-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stock-source {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+        .stock-time {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* DONNIE'S WISHLIST - PENCIL ON PAPER */
+        
+        .invasion-section {
+            background: #1a1a1a;
+            padding: 50px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-top: 1px solid var(--border);
+        }
+        
+        .invasion-section-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .invasion-section-header h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+        
+        .invasion-container {
+            width: 100%;
+            max-width: 550px;
+            background: #f4f1ea;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-blend-mode: soft-light;
+            padding: 60px 50px;
+            position: relative;
+            box-shadow: 
+                0 1px 1px rgba(0,0,0,0.1),
+                0 4px 8px rgba(0,0,0,0.1),
+                0 12px 24px rgba(0,0,0,0.15),
+                2px 2px 0 #e8e5de,
+                4px 4px 0 #ddd9d0;
+            transform: rotate(-1.5deg);
+        }
+        
+        /* Paper edge tear effect */
+        .invasion-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -3px;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(to right, #f4f1ea, transparent);
+            filter: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+        
+        .paper-title {
+            font-family: 'Shadows Into Light', cursive;
+            font-size: 1.8rem;
+            color: #4a4a4a;
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        
+        .paper-content {
+            font-family: 'Shadows Into Light', cursive;
+            font-size: 1.5rem;
+            color: #3d3d3d;
+            line-height: 2.2;
+        }
+        
+        .paper-line {
+            display: block;
+            margin-bottom: 4px;
+            position: relative;
+        }
+        
+        .paper-line.indent {
+            padding-left: 30px;
+        }
+        
+        .paper-line .highlight {
+            background: linear-gradient(180deg, transparent 60%, rgba(255,255,0,0.3) 60%);
+            padding: 0 4px;
+        }
+        
+        .paper-line .circle {
+            display: inline-block;
+            border: 2px solid #4a4a4a;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            text-align: center;
+            line-height: 24px;
+            margin-right: 6px;
+            font-size: 1.1rem;
+        }
+        
+        .paper-line .crossed {
+            text-decoration: line-through;
+            color: #888;
+        }
+        
+        .paper-line .arrow-note {
+            font-size: 1.1rem;
+            color: #666;
+            margin-left: 10px;
+        }
+        
+        .paper-line .underline-heavy {
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 3px;
+        }
+        
+        .paper-line .stars {
+            color: #555;
+            letter-spacing: -2px;
+        }
+        
+        .doodle-star {
+            position: absolute;
+            font-family: 'Shadows Into Light', cursive;
+            color: #555;
+        }
+        .doodle-1 { top: 30px; right: 40px; font-size: 2.5rem; transform: rotate(15deg); }
+        .doodle-2 { bottom: 40px; right: 50px; font-size: 1rem; transform: rotate(-5deg); }
+        .doodle-3 { bottom: 80px; left: 30px; font-size: 1.2rem; transform: rotate(8deg); }
+        
+        @media (max-width: 600px) {
+            .invasion-container {
+                padding: 40px 30px;
+                transform: rotate(-0.5deg);
+            }
+            .paper-title { font-size: 1.4rem; }
+            .paper-content { font-size: 1.2rem; }
+        }
+
+        /* NEWSLETTER */
+        .newsletter-section {
+            background: linear-gradient(135deg, #1a0a00 0%, #0a0a0a 100%);
+            border-top: 1px solid var(--border);
+            padding: 60px 20px;
+        }
+        .newsletter-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .newsletter-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+        .newsletter-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.2rem;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+        .newsletter-desc {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .newsletter-form {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .newsletter-input {
+            flex: 1;
+            min-width: 250px;
+            max-width: 350px;
+            padding: 14px 20px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .newsletter-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .newsletter-input::placeholder {
+            color: var(--text-muted);
+        }
+        .newsletter-btn {
+            padding: 14px 32px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .newsletter-btn:hover {
+            background: #ff6a33;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+        .newsletter-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .newsletter-success {
+            background: rgba(0, 214, 125, 0.1);
+            border: 1px solid var(--green);
+            color: var(--green);
+            padding: 16px 24px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        /* STUPID QUOTES */
+        .quote-container {
+            position: relative;
+            min-height: 140px;
+        }
+        .quote-item {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255,77,0,0.08), rgba(255,77,0,0.02));
+            border-radius: 12px;
+            border: 1px solid rgba(255,77,0,0.2);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.8s ease;
+        }
+        .quote-item.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .quote-text {
+            font-size: 1.05rem;
+            color: var(--text);
+            line-height: 1.6;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+        .quote-text::before {
+            content: '"';
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-right: 2px;
+        }
+        .quote-text::after {
+            content: '"';
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-left: 2px;
+        }
+        .quote-source {
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* FILTERS */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        .search-input {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            width: 200px;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* PAGINATION */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 30px;
+        }
+        .page-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .page-btn:hover, .page-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* LOADING */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 30px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+
+        /* Error state */
+        .error-message {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid var(--red);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            color: var(--red);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🍊</div>
+                <div>
+                    <h1>The Daily <span>Donald</span></h1>
+                    <div class="logo-tagline">Foolproof news! • Est. 2026</div>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat">
+                    <div class="stat-value" id="newsCount">-</div>
+                    <div class="stat-label">Stories</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="avgRage">-</div>
+                    <div class="stat-label">Avg Rage</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="updateTime">--:--</div>
+                    <div class="stat-label">Updated</div>
+                </div>
+                <div class="live-badge">
+                    <span class="live-dot"></span>
+                    LIVE
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- VIRAL TWEETS TICKER -->
+    <div class="viral-ticker">
+        <div class="ticker-label">🔥 VIRAL</div>
+        <div class="ticker-track">
+            <div class="ticker-content" id="tickerContent"></div>
+        </div>
+    </div>
+
+    <!-- CHAOS METER -->
+    <div class="chaos-meter-section">
+        <div class="chaos-meter-container">
+            <span class="chaos-title">🍊 Trumpometer:</span>
+            <div>
+                <div class="chaos-meter">
+                    <div class="chaos-fill" id="chaosFill" style="width: 50%"></div>
+                </div>
+                <div class="chaos-labels">
+                    <span>😐 Mild</span>
+                    <span>😤 Annoyed</span>
+                    <span>😠 Angry</span>
+                    <span>🤬 Furious</span>
+                    <span>🤯 Unhinged</span>
+                </div>
+            </div>
+            <span class="chaos-level level-4" id="chaosLevel">🤬 LOADING...</span>
+        </div>
+    </div>
+
+    <!-- Feed Status -->
+    <div class="feed-status" id="feedStatus">
+        <span>📡 RSS Sources:</span>
+        <span class="feed-tag">Loading feeds...</span>
+    </div>
+
+    <div class="main-container">
+        <main class="news-section">
+            <h2>Latest Trump News</h2>
+            <div class="filters">
+                <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search news...">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="5">🤯 Unhinged</button>
+                <button class="filter-btn" data-filter="4">🤬 Furious</button>
+                <button class="filter-btn" data-filter="breaking">🔴 Breaking</button>
+            </div>
+            <div class="news-grid" id="newsGrid">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Fetching latest news from 12+ sources...</p>
+                    <p style="font-size: 0.8rem; margin-top: 10px;">This may take a few seconds on first load</p>
+                </div>
+            </div>
+            <div class="pagination" id="pagination"></div>
+        </main>
+
+        <aside class="sidebar">
+            <section class="sidebar-section">
+                <div class="sidebar-header">
+                    <h3>📈 Trade Like Donnie</h3>
+                    <span style="font-size: 0.65rem; color: var(--text-muted);">Market-moving news</span>
+                </div>
+                <div class="sidebar-content" id="stockTips"></div>
+            </section>
+
+            <section class="sidebar-section">
+                <div class="sidebar-header">
+                    <h3>🤡 Stupid Quotes</h3>
+                    <span style="font-size: 0.65rem; color: var(--text-muted);">Real quotes, word for word</span>
+                </div>
+                <div class="sidebar-content" id="stupidQuotes"></div>
+            </section>
+
+            <section class="sidebar-section">
+                <div class="sidebar-header">
+                    <h3>📊 Polymarket Odds</h3>
+                    <span style="font-size: 0.7rem; color: var(--green);">Live</span>
+                </div>
+                <div class="sidebar-content" id="polymarket"></div>
+            </section>
+
+            <section class="sidebar-section">
+                <div class="sidebar-header">
+                    <h3>📢 Truth Social</h3>
+                    <span style="font-size: 0.7rem; color: var(--blue);">@realDonaldTrump</span>
+                </div>
+                <div class="sidebar-content" id="truthSocial"></div>
+            </section>
+
+            <section class="sidebar-section">
+                <div class="sidebar-header">
+                    <h3>🔥 Viral Reactions</h3>
+                </div>
+                <div class="sidebar-content" id="viralTweets"></div>
+            </section>
+        </aside>
+    </div>
+
+    <!-- DONNIE'S WISHLIST - PENCIL ON PAPER -->
+    <section class="invasion-section">
+        <div class="invasion-section-header">
+            <h2>🎯 Intel About Invasion Risks</h2>
+        </div>
+        <div class="invasion-container">
+            <div class="paper-title">Donnies wishlist</div>
+            
+            <div class="paper-content">
+                <span class="paper-line">Dear Santa,</span>
+                <span class="paper-line">I was very good this year.</span>
+                <span class="paper-line">Here is what I want:</span>
+                <span class="paper-line">&nbsp;</span>
+                <span class="paper-line"><span class="circle">1</span> <span class="underline-heavy highlight">GREENLAND</span> <span class="arrow-note">← I WANT THIS</span></span>
+                <span class="paper-line"><span class="circle">2</span> Canada (51st state)</span>
+                <span class="paper-line"><span class="circle">3</span> <span class="crossed">Venezuela</span> <span class="arrow-note">already got!</span></span>
+                <span class="paper-line"><span class="circle">4</span> Panama <span class="arrow-note">(we built it)</span></span>
+                <span class="paper-line"><span class="circle">5</span> Iran <span class="stars">***</span></span>
+                <span class="paper-line"><span class="circle">6</span> Denmark <span class="arrow-note">← has Greenland</span></span>
+                <span class="paper-line"><span class="circle">7</span> Mexico (maybe)</span>
+                <span class="paper-line"><span class="circle">8</span> <span class="crossed">Russia</span> <span class="arrow-note">already friends</span></span>
+                <span class="paper-line">&nbsp;</span>
+                <span class="paper-line">Thank you Santa!</span>
+                <span class="paper-line">&nbsp;</span>
+                <span class="paper-line">- Donnie (age 79.5)</span>
+            </div>
+            
+            <span class="doodle-star doodle-1">☆</span>
+            <span class="doodle-star doodle-2">very important!!</span>
+            <span class="doodle-star doodle-3">:)</span>
+        </div>
+    </section>
+
+    <footer>
+        <p>📡 Aggregating from Google News, The Guardian, NPR, Politico, BBC, Reuters, NY Times, Washington Post, CBS & more</p>
+        <p style="margin-top: 8px;">The Daily Donald — Satire & News Aggregation • Est. 2026</p>
+    </footer>
+
+    <script>
+        // API Configuration
+        const API_BASE = '/api/news';
+        const REFRESH_INTERVAL = 60000; // 60 seconds
+        
+        // Fallback data for preview mode (when API is not available)
+        const FALLBACK_NEWS = [
+            { title: "Trump Says 'Stock Market Will Crash' If He's Impeached", source: "CNBC", excerpt: "Trump posts on Truth Social: 'If they impeach me, the market will crash like never before. Investors love me!'", date: new Date(Date.now() - 900000).toISOString(), rageLevel: 5, breaking: true, link: "https://news.google.com/search?q=trump+stock+market+crash+impeachment" },
+            { title: "Trump's Nobel Prize Rant Triggers 25th Amendment Calls Across Political Spectrum", source: "Yahoo News", excerpt: "After Trump linked Greenland demands to not winning Nobel Prize, Sen. Schatz says 'He is not stable.' Shannon Watts calls for 25th Amendment.", date: new Date(Date.now() - 1800000).toISOString(), rageLevel: 5, breaking: true, link: "https://news.google.com/search?q=trump+nobel+prize+25th+amendment" },
+            { title: "DJT Stock Plunges 15% After Trump's 90-Post Midnight Tirade", source: "Bloomberg", excerpt: "Trump Media shares tank as investors worry about erratic behavior. Trading volume hits record high.", date: new Date(Date.now() - 2700000).toISOString(), rageLevel: 5, breaking: true, link: "https://news.google.com/search?q=DJT+stock+trump+media" },
+            { title: "Trump: 'Buy DJT Stock Now, It Will Be Worth More Than Apple'", source: "Fox Business", excerpt: "President promotes own company stock on Truth Social, drawing SEC scrutiny concerns.", date: new Date(Date.now() - 3600000).toISOString(), rageLevel: 4, breaking: false, link: "https://news.google.com/search?q=trump+DJT+stock+promotion" },
+            { title: "Impeachment Odds Surge to 57% on Prediction Markets as GOP Fractures", source: "Polymarket", excerpt: "Prediction markets show 57% chance Trump impeached by end of 2026. Kalshi odds jumped 15 points in 24 hours.", date: new Date(Date.now() - 5400000).toISOString(), rageLevel: 5, breaking: true, link: "https://polymarket.com/elections" },
+            { title: "Trump Claims 'Dow Will Hit 50,000' Thanks to His Policies", source: "Reuters", excerpt: "At rally, Trump says: 'The Dow will hit 50,000, maybe 60,000. Nobody's ever seen markets like this.'", date: new Date(Date.now() - 7200000).toISOString(), rageLevel: 4, breaking: false, link: "https://news.google.com/search?q=trump+dow+50000" },
+            { title: "Norwegian PM's Polite Text Triggers Trump's Unhinged 30-Minute Response", source: "Daily Beast", excerpt: "PM Støre asked Trump to 'de-escalate.' Trump responded complaining about the Nobel Peace Prize.", date: new Date(Date.now() - 9000000).toISOString(), rageLevel: 5, breaking: true, link: "https://news.google.com/search?q=trump+norway+prime+minister" },
+            { title: "Trump: 'Tesla Stock Would Be Nothing Without My Support'", source: "The Verge", excerpt: "In attack on Musk, Trump claims he made Tesla successful: 'Elon should thank me every day.'", date: new Date(Date.now() - 10800000).toISOString(), rageLevel: 5, breaking: false, link: "https://news.google.com/search?q=trump+tesla+stock+musk" },
+            { title: "Trump Slaps 10% Tariffs on 8 European Countries Over Greenland", source: "NBC News", excerpt: "Denmark, Norway, Sweden, France, Germany, UK, Netherlands and Finland face tariffs. 25% by June.", date: new Date(Date.now() - 14400000).toISOString(), rageLevel: 4, breaking: false, link: "https://news.google.com/search?q=trump+tariffs+europe+greenland" },
+            { title: "Wall Street 'Terrified' by Trump's Greenland Military Threats", source: "Financial Times", excerpt: "Goldman Sachs memo warns clients: 'Geopolitical risk at highest level since Cold War.' Markets volatile.", date: new Date(Date.now() - 18000000).toISOString(), rageLevel: 5, breaking: false, link: "https://news.google.com/search?q=wall+street+trump+greenland" },
+            { title: "Greenlanders Protest: 'He's Lost His Mind' Say Thousands in Streets", source: "CNN", excerpt: "Thousands protest Trump's demands. Local prosecutor: 'I think Trump has lost his mind.'", date: new Date(Date.now() - 21600000).toISOString(), rageLevel: 5, breaking: false, link: "https://news.google.com/search?q=greenland+protests+trump" },
+            { title: "Trump Posts: 'Bitcoin Will Hit $500,000 Under My Leadership'", source: "CoinDesk", excerpt: "Crypto markets spike after Trump's bullish prediction. Bitcoin up 8% in hours.", date: new Date(Date.now() - 25200000).toISOString(), rageLevel: 4, breaking: false, link: "https://news.google.com/search?q=trump+bitcoin+500000" },
+            { title: "Treasury Secretary Refuses to Rule Out Military Action on Greenland", source: "NBC News", excerpt: "Scott Bessent: 'Greenland can only be defended if it is part of the US.'", date: new Date(Date.now() - 28800000).toISOString(), rageLevel: 5, breaking: false, link: "https://news.google.com/search?q=bessent+greenland+military" },
+            { title: "Trump Posts 90 Times in 55 Minutes During 1AM Social Media Tirade", source: "The Mirror", excerpt: "President launched into social media tirade about Venezuela, 2020 conspiracies. Critics: 'Dangerously unstable.'", date: new Date(Date.now() - 32400000).toISOString(), rageLevel: 5, breaking: false, link: "https://news.google.com/search?q=trump+90+posts+truth+social" },
+            { title: "Trump: 'Lockheed Stock Will Triple When I Build the Golden Dome'", source: "Defense News", excerpt: "Defense stocks surge after Trump touts space defense system plans.", date: new Date(Date.now() - 36000000).toISOString(), rageLevel: 4, breaking: false, link: "https://news.google.com/search?q=trump+lockheed+golden+dome" },
+            { title: "Trump Claims Denmark Has 'Two Dogsleds' Protecting Greenland", source: "Daily Beast", excerpt: "In Truth Social post, Trump claimed Denmark's entire Greenland defense consists of just two dogsleds.", date: new Date(Date.now() - 43200000).toISOString(), rageLevel: 4, breaking: false, link: "https://news.google.com/search?q=trump+denmark+dogsleds" },
+            { title: "Trump Threatens Insurrection Act in Minnesota After ICE Shooting", source: "Al Jazeera", excerpt: "After ICE fatally shot Renee Nicole Good, Trump threatens military deployment to the state.", date: new Date(Date.now() - 50400000).toISOString(), rageLevel: 5, breaking: false, link: "https://news.google.com/search?q=trump+insurrection+act+minnesota" },
+            { title: "Trump: 'The Market Loves Me More Than Any President in History'", source: "MarketWatch", excerpt: "At donor event, Trump claims sole credit for stock gains: 'Obama's market was a disaster compared to mine.'", date: new Date(Date.now() - 57600000).toISOString(), rageLevel: 4, breaking: false, link: "https://news.google.com/search?q=trump+market+loves+me" },
+            { title: "NATO Stands in 'Full Solidarity' with Denmark Against Trump Threats", source: "Reuters", excerpt: "NATO warns of 'dangerous downward spiral' after Trump's Greenland tariff threats.", date: new Date(Date.now() - 64800000).toISOString(), rageLevel: 4, breaking: false, link: "https://news.google.com/search?q=nato+denmark+trump+solidarity" },
+            { title: "Trump-Musk Feud Escalates: 'Maybe He Should Go Back Where He Came From'", source: "NPR", excerpt: "Former allies continue public battle after DOGE departure and policy disagreements.", date: new Date(Date.now() - 72000000).toISOString(), rageLevel: 5, breaking: false, link: "https://news.google.com/search?q=trump+musk+feud+go+back" },
+            { title: "RFK Jr. Says Trump's Diet Is 'Unhinged': 'I Don't Know How He's Alive'", source: "NBC News", excerpt: "Health Secretary publicly criticizes president's eating habits in shocking interview.", date: new Date(Date.now() - 86400000).toISOString(), rageLevel: 4, breaking: false, link: "https://news.google.com/search?q=rfk+jr+trump+diet+unhinged" },
+            { title: "Trump Convicted of 34 Felonies — First President Found Guilty of Crimes", source: "NBC News", excerpt: "Historic verdict in Manhattan courtroom marks unprecedented moment in American history.", date: new Date("2024-05-30").toISOString(), rageLevel: 5, breaking: false, link: "https://news.google.com/search?q=trump+convicted+34+felonies" },
+            { title: "Trump Claims Immigrants 'Eating the Dogs, Eating the Cats' in Debate", source: "Euronews", excerpt: "Fact-checked live on air during presidential debate. No evidence found for claims.", date: new Date("2024-09-10").toISOString(), rageLevel: 5, breaking: false, link: "https://news.google.com/search?q=trump+eating+dogs+cats+debate" },
+        ];
+        
+        // Rage levels config
+        const rageLevels = {
+            1: { label: "MILD", emoji: "😐" },
+            2: { label: "ANNOYED", emoji: "😤" },
+            3: { label: "ANGRY", emoji: "😠" },
+            4: { label: "FURIOUS", emoji: "🤬" },
+            5: { label: "UNHINGED", emoji: "🤯" }
+        };
+
+        // Keywords for rage calculation (used in preview mode)
+        const RAGE_KEYWORDS = {
+            5: ['insurrection', 'impeach', '25th amendment', 'unhinged', 'unstable', 'invasion', 'military action', 'locked and loaded', 'chaos', 'crisis', 'emergency'],
+            4: ['tariff', 'slam', 'demands', 'threatens', 'blast', 'greenland', 'conflict', 'clash', 'warns', 'escalat', 'tensions'],
+            3: ['claims', 'false', 'lie', 'misleading', 'criticism', 'concerns', 'controversy'],
+            2: ['says', 'announces', 'plans', 'considers', 'proposes'],
+            1: ['meets', 'visits', 'speaks', 'signs', 'travels']
+        };
+        
+        function calculateRageLevel(title, excerpt) {
+            const text = `${title} ${excerpt}`.toLowerCase();
+            const originalText = `${title} ${excerpt}`;
+            
+            // Check keywords first
+            for (let level = 5; level >= 1; level--) {
+                if (RAGE_KEYWORDS[level].some(kw => text.includes(kw))) {
+                    return level;
+                }
+            }
+            
+            // Fallback: analyze tone
+            let score = 2;
+            
+            // ALL CAPS words
+            const capsWords = originalText.match(/\b[A-Z]{3,}\b/g) || [];
+            if (capsWords.length >= 3) score += 2;
+            else if (capsWords.length >= 1) score += 1;
+            
+            // Exclamation marks
+            const exclamations = (originalText.match(/!/g) || []).length;
+            if (exclamations >= 2) score += 1;
+            
+            // Intense words
+            const intenseWords = ['outrage', 'scandal', 'bombshell', 'shocking', 'slams', 'rips', 'destroys', 'blasts', 'meltdown', 'tirade', 'rant'];
+            if (intenseWords.some(word => text.includes(word))) score += 1;
+            
+            // Quotes in title
+            if (title.includes('"') || title.includes("'")) score += 1;
+            
+            return Math.min(5, Math.max(1, score));
+        }
+
+        // Polymarket data
+        const polyData = [
+            { q: "Impeached by end of 2026?", pct: 57, chg: 12 },
+            { q: "Acquires Greenland?", pct: 18, chg: 9 },
+            { q: "US invades Greenland?", pct: 9, chg: 3 },
+            { q: "25th Amendment invoked?", pct: 6, chg: 4 },
+            { q: "Resigns before 2027?", pct: 8, chg: 2 },
+            { q: "Dems win House 2026?", pct: 74, chg: 8 },
+        ];
+
+        // Truth Social posts
+        const truthPosts = [
+            { text: "Starting Feb 1st, Denmark, Norway, Sweden, France, Germany will be charged <strong>10% TARIFF</strong>. June 1st: <strong>25%</strong>. Until Greenland is OURS!", time: "2h ago", rage: 5 },
+            { text: "Considering your Country decided not to give me the Nobel Peace Prize for stopping 8 Wars, I no longer feel an obligation to think purely of Peace!", time: "5h ago", rage: 5 },
+            { text: "If the corrupt politicians of Minnesota don't stop the agitators, I will institute the <strong>INSURRECTION ACT!</strong>", time: "Yesterday", rage: 5 },
+        ];
+
+        // Viral tweets with Twitter links
+        const viralTweets = [
+            { user: "@brianschatz", text: "He is not stable at all and his reality is warped.", likes: "389K", url: "https://x.com/brianschatz" },
+            { user: "@AdamKinzinger", text: "Republicans. It's time to move Gramps into a home.", likes: "456K", url: "https://x.com/AdamKinzinger" },
+            { user: "@shannonrwatts", text: "This is what the 25TH AMENDMENT IS FOR", likes: "678K", url: "https://x.com/shannonrwatts" },
+            { user: "@RepDonBacon", text: "If he went through with Greenland threats, it would be the end of his presidency. Utter buffoonery.", likes: "234K", url: "https://x.com/RepDonBacon" },
+            { user: "@MarkWarner", text: "Will my Republican friends say publicly what they say privately: 'Mark, this is crazy'?", likes: "312K", url: "https://x.com/MarkWarner" },
+            { user: "@DrMindMatters", text: "Speaking professionally: posting 160 times in one evening is alarming behavior.", likes: "289K", url: "https://x.com/search?q=trump%20posting" },
+            { user: "@EuropeWatcher", text: "Trump thinks he can buy Greenland with tariffs like it's Black Friday 💀", likes: "423K", url: "https://x.com/search?q=trump%20greenland" },
+            { user: "@FactCheckNet", text: "Trump posted 90 times in 55 minutes at 1am. This is not normal behavior.", likes: "567K", url: "https://x.com/search?q=trump%2090%20posts" },
+            { user: "@PoliticalInsider", text: "RFK Jr. saying Trump's diet is 'unhinged' is peak 2026", likes: "345K", url: "https://x.com/search?q=RFK%20trump%20diet" },
+            { user: "@HistoryTeacher", text: "Never seen a president threaten the Insurrection Act over peaceful protests.", likes: "278K", url: "https://x.com/search?q=trump%20insurrection%20act" },
+        ];
+
+        // REAL Trump quotes - verified, word for word
+        const stupidQuotes = [
+            // 2026
+            { text: "Greenland will be ours. We need it for national security. I'm not ruling out military force.", source: "Press Conference, Jan 2026" },
+            { text: "Denmark has two dogsleds protecting Greenland. Two! We could take it in a weekend.", source: "Truth Social, Jan 2026" },
+            { text: "I deserve the Nobel Peace Prize. Norway is very unfair. Very, very unfair.", source: "Truth Social, Jan 2026" },
+            // 2025
+            { text: "Canada should become our 51st state. They would love it. Their leader is a total disaster.", source: "Rally, Dec 2025" },
+            { text: "We built the Panama Canal and we're taking it back. China is running it now. Not anymore.", source: "Turning Point Speech, Dec 2025" },
+            { text: "I'm putting 25% tariffs on Mexico, Canada, and China on day one. Maybe higher.", source: "Interview, Nov 2025" },
+            // 2024
+            { text: "They're eating the dogs. They're eating the cats. They're eating the pets of the people that live there.", source: "Presidential Debate, Sep 2024" },
+            { text: "I took a bullet for democracy.", source: "RNC Convention, Jul 2024" },
+            { text: "This is a persecution. I did nothing wrong. This is election interference.", source: "After Conviction, May 2024" },
+            { text: "If I don't get elected, it's going to be a bloodbath for the country.", source: "Ohio Rally, Mar 2024" },
+            { text: "I never knew how dishonest the media was until I ran for president. Fake news!", source: "Rally, 2024" },
+            // Classics
+            { text: "I have a great relationship with the blacks. I've always had a great relationship with the blacks.", source: "Talk Radio 1210 WPHT, 2011" },
+            { text: "I could stand in the middle of Fifth Avenue and shoot somebody, and I wouldn't lose any voters.", source: "Campaign Rally, Iowa, 2016" },
+            { text: "I think I'm much more humble than you would understand.", source: "60 Minutes Interview, 2016" },
+            { text: "Despite the constant negative press covfefe", source: "Twitter, May 2017" },
+            { text: "I'm, like, a really smart person.", source: "Phoenix Rally, 2017" },
+            { text: "I have the best words.", source: "Campaign Rally, 2015" },
+            { text: "Look, having nuclear — my uncle was a great professor... nuclear is powerful.", source: "Campaign Speech, 2016" },
+            { text: "I'm speaking with myself, number one, because I have a very good brain.", source: "Morning Joe, 2016" },
+            { text: "I'm like a very stable genius.", source: "Twitter, Jan 2018" },
+            { text: "I know more about ISIS than the generals do. Believe me.", source: "Campaign Rally, 2015" },
+            { text: "Nobody knew health care could be so complicated.", source: "White House, Feb 2017" },
+            { text: "My IQ is one of the highest — and you all know it!", source: "Twitter, 2013" },
+            { text: "I will build a great, great wall on our southern border, and I will have Mexico pay for that wall.", source: "Campaign Announcement, 2015" },
+            { text: "Why can't we use nuclear weapons?", source: "Foreign Policy Briefing (reported), 2016" },
+            { text: "Windmills... they say the noise causes cancer.", source: "NRCC Dinner, 2019" },
+            { text: "I know more about renewables than any human being on Earth.", source: "Interview, 2016" },
+            { text: "I'm the least racist person there is anywhere in the world.", source: "Presidential Debate, 2020" },
+            { text: "Person. Woman. Man. Camera. TV.", source: "Fox News Interview, Jul 2020" },
+            { text: "Maybe we should inject disinfectant? It gets in the lungs and does a tremendous number.", source: "COVID Briefing, Apr 2020" },
+            { text: "I don't take responsibility at all.", source: "COVID Press Conference, Mar 2020" },
+        ];
+
+        // Keywords that indicate Trump specifically talking about stocks/market
+        const STOCK_STATEMENT_KEYWORDS = [
+            // Direct market talk
+            'stock', 'stocks', 'market', 'markets', 'dow', 'nasdaq', 's&p', 'wall street',
+            'investors', 'shareholders', 'trading', 'share price', 'stock price',
+            // Trump's typical market phrases
+            'best economy', 'market crash', 'stocks soar', 'stocks tank', 'market boom',
+            'buy stock', 'sell stock', 'stock up', 'stock down',
+            // Specific companies he mentions
+            'truth social', 'trump media', 'djt stock', 'tmtg',
+            'tesla stock', 'apple stock', 'amazon stock', 'google stock', 'meta stock',
+            // Financial actions
+            'ipo', 'merger', 'acquisition', 'bankruptcy', 'earnings',
+            // His economic claims
+            'billion dollar', 'million dollar', 'trillion', 'net worth',
+        ];
+        
+        // Ticker mappings for specific mentions
+        const TICKER_MAPPINGS = {
+            'truth social': { tickers: ['DJT'], emoji: '📱' },
+            'trump media': { tickers: ['DJT'], emoji: '📱' },
+            'tmtg': { tickers: ['DJT'], emoji: '📱' },
+            'djt': { tickers: ['DJT'], emoji: '📱' },
+            'tesla': { tickers: ['TSLA'], emoji: '⚡' },
+            'apple': { tickers: ['AAPL'], emoji: '🍎' },
+            'amazon': { tickers: ['AMZN'], emoji: '📦' },
+            'google': { tickers: ['GOOGL'], emoji: '🔍' },
+            'meta': { tickers: ['META'], emoji: '👤' },
+            'facebook': { tickers: ['META'], emoji: '👤' },
+            'microsoft': { tickers: ['MSFT'], emoji: '💻' },
+            'nvidia': { tickers: ['NVDA'], emoji: '🎮' },
+            'boeing': { tickers: ['BA'], emoji: '✈️' },
+            'lockheed': { tickers: ['LMT'], emoji: '🛡️' },
+            'exxon': { tickers: ['XOM'], emoji: '🛢️' },
+            'chevron': { tickers: ['CVX'], emoji: '🛢️' },
+            'bitcoin': { tickers: ['BTC', 'MSTR'], emoji: '₿' },
+            'crypto': { tickers: ['BTC', 'COIN'], emoji: '₿' },
+            'dow': { tickers: ['DIA'], emoji: '📊' },
+            'nasdaq': { tickers: ['QQQ'], emoji: '📈' },
+            's&p': { tickers: ['SPY'], emoji: '📊' },
+            'wall street': { tickers: ['SPY', 'DIA'], emoji: '🏛️' },
+            'market': { tickers: ['SPY'], emoji: '📊' },
+            'stock': { tickers: ['SPY'], emoji: '📈' },
+        };
+
+        function findStockRelevantNews(news) {
+            const stockNews = [];
+            
+            // Keywords that indicate Trump is connected to the stock news
+            const trumpIndicators = [
+                'trump', 'donald', 'president', 'white house', 'administration',
+                'trump says', 'trump claims', 'trump posts', 'trump announces',
+                'truth social', 'mar-a-lago', 'maga'
+            ];
+            
+            for (const item of news) {
+                const text = `${item.title} ${item.excerpt}`.toLowerCase();
+                
+                // Must have BOTH: stock keywords AND Trump connection
+                const hasStockKeyword = STOCK_STATEMENT_KEYWORDS.some(kw => text.includes(kw));
+                const hasTrumpConnection = trumpIndicators.some(t => text.includes(t));
+                
+                if (hasStockKeyword && hasTrumpConnection) {
+                    // Find which tickers are relevant
+                    let matchedTickers = { tickers: ['SPY'], emoji: '📊' }; // Default
+                    
+                    for (const [keyword, data] of Object.entries(TICKER_MAPPINGS)) {
+                        if (text.includes(keyword)) {
+                            matchedTickers = data;
+                            break;
+                        }
+                    }
+                    
+                    stockNews.push({
+                        ...item,
+                        tickers: matchedTickers.tickers,
+                        stockEmoji: matchedTickers.emoji
+                    });
+                }
+            }
+            
+            return stockNews.slice(0, 5); // Max 5 items
+        }
+
+        // State
+        let currentFilter = 'all';
+        let searchTerm = '';
+        let currentPage = 1;
+        let lastData = null;
+
+        // Initialize
+        async function init() {
+            renderTicker();
+            renderPolymarket();
+            renderTruthSocial();
+            renderViralTweets();
+            renderStockTips(FALLBACK_NEWS); // Initial render with fallback
+            renderStupidQuotes();
+            
+            await fetchNews();
+            
+            // Refresh every 60 seconds
+            setInterval(fetchNews, REFRESH_INTERVAL);
+            setInterval(updatePolymarket, 30000);
+            setInterval(updateTime, 1000);
+        }
+
+        function renderTicker() {
+            const tweets = [...viralTweets, ...viralTweets]; // Duplicate for seamless loop
+            document.getElementById('tickerContent').innerHTML = tweets.map(t => `
+                <a href="${t.url}" target="_blank" class="ticker-item">
+                    <span class="ticker-user">${t.user}</span>
+                    <span class="ticker-text">"${t.text}"</span>
+                    <span class="ticker-likes">❤️ ${t.likes}</span>
+                </a>
+                <span class="ticker-divider">•</span>
+            `).join('');
+        }
+
+        function renderStockTips(news) {
+            const stockNews = findStockRelevantNews(news || FALLBACK_NEWS);
+            
+            if (stockNews.length === 0) {
+                document.getElementById('stockTips').innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">🤫</div>
+                        No market news from Trump right now
+                    </div>
+                `;
+                return;
+            }
+            
+            document.getElementById('stockTips').innerHTML = stockNews.map(s => {
+                const timeAgo = getTimeAgo(s.date);
+                return `
+                    <a href="${s.link}" target="_blank" class="stock-item">
+                        <div class="stock-reason">${s.title.length > 90 ? s.title.substring(0, 90) + '...' : s.title}</div>
+                        <div class="stock-footer">
+                            <span class="stock-source">📰 ${s.source}</span>
+                            <span class="stock-time">🕐 ${timeAgo}</span>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+        }
+
+        function renderStupidQuotes() {
+            // Shuffle quotes
+            const shuffled = [...stupidQuotes].sort(() => Math.random() - 0.5);
+            
+            // Create HTML with all quotes (only first visible)
+            document.getElementById('stupidQuotes').innerHTML = `
+                <div class="quote-container">
+                    ${shuffled.map((q, i) => `
+                        <div class="quote-item ${i === 0 ? 'active' : ''}" data-index="${i}">
+                            <div class="quote-text">${q.text}</div>
+                            <div class="quote-source">— ${q.source}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            // Rotate quotes every 12 seconds
+            let currentQuote = 0;
+            const quotes = document.querySelectorAll('.quote-item');
+            const totalQuotes = Math.min(quotes.length, 8);
+            
+            setInterval(() => {
+                quotes[currentQuote].classList.remove('active');
+                currentQuote = (currentQuote + 1) % totalQuotes;
+                quotes[currentQuote].classList.add('active');
+            }, 12000);
+        }
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('updateTime').textContent = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit'
+            });
+        }
+
+        // Fetch news from API
+        async function fetchNews() {
+            try {
+                const params = new URLSearchParams({
+                    page: currentPage,
+                    limit: 12,
+                    filter: currentFilter,
+                    search: searchTerm
+                });
+                
+                const response = await fetch(`${API_BASE}?${params}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    lastData = result.data;
+                    renderNews(result.data);
+                    renderFeedStatus(result.data.feeds);
+                    updateStats(result.data.stats);
+                    updateChaosLevel(result.data.stats.avgRageLevel);
+                } else {
+                    throw new Error(result.error || 'Failed to fetch news');
+                }
+            } catch (error) {
+                console.error('Fetch error, using fallback data:', error);
+                // Use fallback data for preview/demo mode
+                useFallbackData();
+            }
+        }
+        
+        function useFallbackData() {
+            let filteredNews = [...FALLBACK_NEWS];
+            
+            if (currentFilter === 'breaking') {
+                filteredNews = filteredNews.filter(n => n.breaking);
+            } else if (currentFilter === '5') {
+                filteredNews = filteredNews.filter(n => n.rageLevel === 5);
+            } else if (currentFilter === '4') {
+                filteredNews = filteredNews.filter(n => n.rageLevel >= 4);
+            }
+            
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                filteredNews = filteredNews.filter(n => 
+                    n.title.toLowerCase().includes(term) || 
+                    n.excerpt.toLowerCase().includes(term)
+                );
+            }
+            
+            const avgRage = filteredNews.reduce((sum, n) => sum + n.rageLevel, 0) / filteredNews.length;
+            
+            renderNews({
+                news: filteredNews.slice((currentPage - 1) * 12, currentPage * 12),
+                pagination: { page: currentPage, totalPages: Math.ceil(filteredNews.length / 12), total: filteredNews.length }
+            });
+            
+            renderFeedStatus([
+                { name: 'Preview Mode', status: 'ok' }
+            ]);
+            
+            updateStats({ totalNews: FALLBACK_NEWS.length, avgRageLevel: avgRage.toFixed(1) });
+            updateChaosLevel(avgRage);
+        }
+
+        function renderFeedStatus(feeds) {
+            if (!feeds) return;
+            const statusEl = document.getElementById('feedStatus');
+            statusEl.innerHTML = '<span>📡 RSS Sources:</span>' + 
+                feeds.map(f => `<span class="feed-tag ${f.status}">${f.name} ${f.status === 'ok' ? '✓' : '✗'}</span>`).join('');
+        }
+
+        function updateStats(stats) {
+            if (!stats) return;
+            document.getElementById('newsCount').textContent = stats.totalNews || 0;
+            document.getElementById('avgRage').textContent = stats.avgRageLevel || '-';
+        }
+
+        function updateChaosLevel(avgRage) {
+            if (!avgRage) return;
+            const percentage = (avgRage / 5) * 100;
+            document.getElementById('chaosFill').style.width = percentage + '%';
+            
+            const level = Math.round(avgRage);
+            const labels = ['', '😐 MILD', '😤 ANNOYED', '😠 ANGRY', '🤬 FURIOUS', '🤯 UNHINGED'];
+            const levelEl = document.getElementById('chaosLevel');
+            levelEl.textContent = labels[level] || labels[3];
+            levelEl.className = `chaos-level level-${level}`;
+        }
+
+        function renderNews(data) {
+            const news = data.news || [];
+            const grid = document.getElementById('newsGrid');
+            
+            // Update stock tips with current news
+            renderStockTips(news);
+            
+            if (news.length === 0) {
+                grid.innerHTML = `
+                    <div class="loading">
+                        <p>No news found matching your criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = news.map((item, i) => {
+                const rage = rageLevels[item.rageLevel] || rageLevels[3];
+                const timeAgo = getTimeAgo(item.date);
+                return `
+                    <article class="news-card ${item.breaking ? 'breaking' : ''}" onclick="window.open('${item.link}', '_blank')">
+                        <div class="card-header">
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                ${item.breaking ? '<span class="card-badge breaking">Breaking</span>' : ''}
+                                <span class="rage-badge level-${item.rageLevel}">${rage.emoji} ${rage.label}</span>
+                            </div>
+                            <span class="card-time">${timeAgo}</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-source">📰 ${item.source}</div>
+                            <h3 class="card-title">${escapeHtml(item.title)}</h3>
+                            <p class="card-excerpt">${escapeHtml(item.excerpt)}</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="rage-meter-mini">
+                                ${[1,2,3,4,5].map(n => `<span class="rage-dot ${n <= item.rageLevel ? 'active l' + n : ''}"></span>`).join('')}
+                            </div>
+                            <span class="card-category">${item.source}</span>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+            
+            renderPagination(data.pagination);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function getTimeAgo(dateStr) {
+            const date = new Date(dateStr);
+            const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+            if (seconds < 60) return 'Just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            if (days < 30) return `${days}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        function renderPagination(pagination) {
+            if (!pagination || pagination.totalPages <= 1) {
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+            
+            const { page, totalPages } = pagination;
+            let html = `<button class="page-btn" onclick="goPage(1)" ${page === 1 ? 'disabled' : ''}>«</button>`;
+            
+            for (let i = Math.max(1, page - 2); i <= Math.min(totalPages, page + 2); i++) {
+                html += `<button class="page-btn ${i === page ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
+            }
+            
+            html += `<button class="page-btn" onclick="goPage(${totalPages})" ${page === totalPages ? 'disabled' : ''}>»</button>`;
+            document.getElementById('pagination').innerHTML = html;
+        }
+
+        function goPage(p) {
+            currentPage = p;
+            fetchNews();
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+
+        function renderPolymarket() {
+            document.getElementById('polymarket').innerHTML = polyData.map(p => `
+                <div class="poly-item">
+                    <span class="poly-question">${p.q}</span>
+                    <div class="poly-odds">
+                        <span class="poly-percent">${p.pct}%</span>
+                        <span class="poly-change ${p.chg >= 0 ? 'up' : 'down'}">${p.chg >= 0 ? '+' : ''}${p.chg}%</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updatePolymarket() {
+            polyData.forEach(p => {
+                const change = Math.round((Math.random() - 0.5) * 6);
+                p.pct = Math.max(1, Math.min(99, p.pct + change));
+                p.chg = change;
+            });
+            renderPolymarket();
+        }
+
+        function renderTruthSocial() {
+            document.getElementById('truthSocial').innerHTML = truthPosts.map(p => `
+                <div class="truth-post">
+                    <span class="truth-rage">${rageLevels[p.rage]?.emoji || '🤯'}</span>
+                    <div class="truth-header">
+                        <div class="truth-avatar">🍊</div>
+                        <div>
+                            <div class="truth-name">Donald J. Trump ✓</div>
+                            <div class="truth-handle">@realDonaldTrump</div>
+                        </div>
+                    </div>
+                    <div class="truth-text">${p.text}</div>
+                    <div class="truth-time">${p.time}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderViralTweets() {
+            document.getElementById('viralTweets').innerHTML = viralTweets.slice(0, 5).map(t => `
+                <a href="${t.url}" target="_blank" class="tweet-item">
+                    <div class="tweet-user">${t.user}</div>
+                    <div>${t.text}</div>
+                    <div class="tweet-likes">❤️ ${t.likes}</div>
+                </a>
+            `).join('');
+        }
+
+        // Event listeners
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                currentPage = 1;
+                fetchNews();
+            });
+        });
+
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', e => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchTerm = e.target.value;
+                currentPage = 1;
+                fetchNews();
+            }, 300);
+        });
+
+        // Start
+        init();
+        updateTime();
+    </script>
+</body>
+</html>
